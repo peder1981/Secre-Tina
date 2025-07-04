@@ -1,0 +1,24 @@
+# Arquivos de ambiente
+.env
+.env.*
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Logs
+*.log
+
+# Diretórios de output
+output/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
