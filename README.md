@@ -31,8 +31,9 @@
 
 | Recurso | Descrição |
 |---------|-------------|
-| **Modo Reunião** | Gera resumos de reuniões com participantes, pauta, pontos principais e ações |
+| **Modo Reunião** | Gera resumos de reunião com participantes, pauta, pontos principais e ações |
 | **Modo Diário** | Organiza seus pensamentos em atividades, desafios, conquistas e planejamento |
+| **Revisão de Áudio** | Permite processar novamente áudios já gravados para novas transcrições e resumos |
 | **Gravação Fácil** | Gravação com um clique usando seu microfone padrão |
 | **Transcrição Local** | Utiliza Whisper para transcrever seu áudio localmente, sem enviar para a nuvem |
 | **Arquivos de Transcrição** | Salva automaticamente as transcrições em arquivos `.txt` para referência futura |
@@ -103,12 +104,34 @@ python secre_tina.py
 
 Siga o fluxo intuitivo:
 
-1. **Escolha o modo**: Reunião ou Diário
-2. **Grave seu áudio**: Pressione Enter quando terminar
-3. **Aguarde o processamento**: Transcrição, salvamento da transcrição e sumarização automáticas
-4. **Aproveite o resultado**: Transcrição salva em formato de texto e resumo formatado em Markdown
+1. **Escolha a ação**: Nova Gravação ou Revisar Áudio Existente
+2. **Se nova gravação**:
+   - Escolha o modo (Reunião ou Diário)
+   - Grave seu áudio e pressione Enter quando terminar
+3. **Se revisar áudio existente**:
+   - Selecione o arquivo de áudio da lista
+   - Escolha o modo (Reunião ou Diário) para o resumo
+4. **Aguarde o processamento**: Transcrição, salvamento da transcrição e sumarização automáticas
+5. **Aproveite o resultado**: Transcrição salva em formato de texto e resumo formatado em Markdown
 
 ## 🚀 Exemplos de Uso
+
+### Nova Gravação
+```bash
+python secre_tina.py
+> 1  # Seleciona nova gravação
+> 1  # Seleciona modo reunião
+# [Fale durante a gravação]
+# Pressione Enter para finalizar
+```
+
+### Revisão de Áudio
+```bash
+python secre_tina.py
+> 2  # Seleciona revisar áudio existente
+> 1  # Seleciona o arquivo de áudio da lista
+> 1  # Seleciona modo reunião para o novo resumo
+```
 
 ### Reuniões de Equipe
 Grave sua reunião e obtenha um resumo estruturado com participantes, pontos discutidos e ações a serem tomadas.

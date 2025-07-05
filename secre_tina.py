@@ -54,6 +54,13 @@ Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 UI_STRINGS = {
     'pt': {
         'welcome': "🎙️ Bem-vindo à Secre-Tina! 🤖\n",
+        'action_select': "Escolha a ação:\n1. Nova Gravação\n2. Revisar Áudio Existente\n> ",
+        'new_recording': "🎙️ Nova gravação selecionada",
+        'review_audio': "🔊 Revisão de áudio selecionada",
+        'select_audio': "Selecione o arquivo de áudio para revisão na pasta {0}:\n",
+        'audio_not_found': "Nenhum arquivo de áudio encontrado na pasta {0}",
+        'invalid_selection': "Seleção inválida. Por favor, tente novamente.",
+        'selected_file': "Arquivo selecionado: {0}",
         'mode_select': "Escolha o modo:\n1. Reunião\n2. Diário\n> ",
         'meeting_mode': "📋 Modo Reunião selecionado",
         'diary_mode': "📔 Modo Diário selecionado",
@@ -68,6 +75,13 @@ UI_STRINGS = {
     },
     'en': {
         'welcome': "🎙️ Welcome to Secre-Tina! 🤖\n",
+        'action_select': "Choose action:\n1. New Recording\n2. Review Existing Audio\n> ",
+        'new_recording': "🎙️ New recording selected",
+        'review_audio': "🔊 Audio review selected",
+        'select_audio': "Select an audio file for review in the {0} folder:\n",
+        'audio_not_found': "No audio files found in the {0} folder",
+        'invalid_selection': "Invalid selection. Please try again.",
+        'selected_file': "Selected file: {0}",
         'mode_select': "Choose mode:\n1. Meeting\n2. Diary\n> ",
         'meeting_mode': "📋 Meeting Mode selected",
         'diary_mode': "📔 Diary Mode selected",
@@ -82,6 +96,13 @@ UI_STRINGS = {
     },
     'es': {
         'welcome': "🎙️ ¡Bienvenido a Secre-Tina! 🤖\n",
+        'action_select': "Elija la acción:\n1. Nueva Grabación\n2. Revisar Audio Existente\n> ",
+        'new_recording': "🎙️ Nueva grabación seleccionada",
+        'review_audio': "🔊 Revisión de audio seleccionada",
+        'select_audio': "Seleccione un archivo de audio para revisar en la carpeta {0}:\n",
+        'audio_not_found': "No se encontraron archivos de audio en la carpeta {0}",
+        'invalid_selection': "Selección inválida. Por favor, inténtelo de nuevo.",
+        'selected_file': "Archivo seleccionado: {0}",
         'mode_select': "Elija el modo:\n1. Reunión\n2. Diario\n> ",
         'meeting_mode': "📋 Modo Reunión seleccionado",
         'diary_mode': "📔 Modo Diario seleccionado",
@@ -411,26 +432,95 @@ def save_summary(summary, mode, timestamp):
     
     return filepath
 
+def list_audio_files():
+    """
+    Lista os arquivos de áudio disponíveis na pasta de saída.
+    
+    Returns:
+        lista de arquivos de áudio (.wav)
+    """
+    audio_files = []
+    if os.path.exists(OUTPUT_DIR):
+        for file in os.listdir(OUTPUT_DIR):
+            if file.endswith(".wav") and os.path.isfile(os.path.join(OUTPUT_DIR, file)):
+                audio_files.append(file)
+    return sorted(audio_files)
+
+def select_audio_file():
+    """
+    Permite ao usuário selecionar um arquivo de áudio existente.
+    
+    Returns:
+        Caminho para o arquivo de áudio selecionado
+    """
+    audio_files = list_audio_files()
+    
+    if not audio_files:
+        print(ui['audio_not_found'].format(OUTPUT_DIR))
+        return None
+    
+    print(ui['select_audio'].format(OUTPUT_DIR))
+    for i, file in enumerate(audio_files):
+        print(f"{i+1}. {file}")
+    
+    try:
+        selection = int(input("> "))
+        if selection < 1 or selection > len(audio_files):
+            print(ui['invalid_selection'])
+            return None
+        
+        selected_file = audio_files[selection-1]
+        print(ui['selected_file'].format(selected_file))
+        return os.path.join(OUTPUT_DIR, selected_file)
+    except ValueError:
+        print(ui['invalid_selection'])
+        return None
+
 def main():
     """Função principal do programa"""
     try:
         # Exibir mensagem de boas-vindas
         print(ui['welcome'])
         
-        # Escolher modo (reunião ou diário)
-        mode_choice = input(ui['mode_select'])
-        if mode_choice == "1":
-            mode = "meeting"
-            print(ui['meeting_mode'])
-        else:
-            mode = "diary"
-            print(ui['diary_mode'])
+        # Escolher ação (nova gravação ou revisar áudio existente)
+        action_choice = input(ui['action_select'])
         
         # Timestamp único para todos os arquivos relacionados a esta sessão
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         
-        # Gravar áudio
-        audio_file = record_audio(timestamp)
+        # Definir arquivo de áudio com base na ação escolhida
+        if action_choice == "1":
+            # Nova gravação
+            print(ui['new_recording'])
+            
+            # Escolher modo (reunião ou diário)
+            mode_choice = input(ui['mode_select'])
+            if mode_choice == "1":
+                mode = "meeting"
+                print(ui['meeting_mode'])
+            else:
+                mode = "diary"
+                print(ui['diary_mode'])
+            
+            # Gravar novo áudio
+            audio_file = record_audio(timestamp)
+        else:
+            # Revisar áudio existente
+            print(ui['review_audio'])
+            
+            # Selecionar arquivo de áudio existente
+            audio_file = select_audio_file()
+            if audio_file is None:
+                return 1
+            
+            # Escolher modo (reunião ou diário)
+            mode_choice = input(ui['mode_select'])
+            if mode_choice == "1":
+                mode = "meeting"
+                print(ui['meeting_mode'])
+            else:
+                mode = "diary"
+                print(ui['diary_mode'])
         
         # Transcrever áudio
         transcript = transcribe_audio(audio_file)
