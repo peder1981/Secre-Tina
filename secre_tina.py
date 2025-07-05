@@ -182,7 +182,7 @@ def record_audio(timestamp, fs=16000):
     
     def callback(indata, frame_count, time_info, status):
         frames.append(indata.copy())
-        return (indata, sd.paContinue)
+        return None  # Retornar None em vez de sd.paContinue para continuar a gravação
     
     stream = sd.InputStream(samplerate=fs, channels=1, callback=callback)
     stream.start()
