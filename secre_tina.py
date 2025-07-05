@@ -60,6 +60,7 @@ UI_STRINGS = {
         'recording_start': "🔴 Gravação iniciada. Pressione Enter quando terminar...",
         'recording_stop': "⏹️ Gravação finalizada!",
         'transcribing': "🔄 Transcrevendo o áudio...",
+        'transcript_saved': "📝 Transcrição salva em: ",
         'summarizing': "💭 Gerando resumo com IA...",
         'complete': "✅ Processo completo! Resumo salvo em: ",
         'error': "❌ Erro: ",
@@ -73,6 +74,7 @@ UI_STRINGS = {
         'recording_start': "🔴 Recording started. Press Enter when finished...",
         'recording_stop': "⏹️ Recording stopped!",
         'transcribing': "🔄 Transcribing audio...",
+        'transcript_saved': "📝 Transcript saved at: ",
         'summarizing': "💭 Generating AI summary...",
         'complete': "✅ Process complete! Summary saved at: ",
         'error': "❌ Error: ",
@@ -86,6 +88,7 @@ UI_STRINGS = {
         'recording_start': "🔴 Grabación iniciada. Presione Enter cuando termine...",
         'recording_stop': "⏹️ ¡Grabación finalizada!",
         'transcribing': "🔄 Transcribiendo el audio...",
+        'transcript_saved': "📝 Transcripción guardada en: ",
         'summarizing': "💭 Generando resumen con IA...",
         'complete': "✅ ¡Proceso completo! Resumen guardado en: ",
         'error': "❌ Error: ",
@@ -98,11 +101,12 @@ if LANGUAGE not in UI_STRINGS:
     LANGUAGE = 'pt'
 ui = UI_STRINGS[LANGUAGE]
 
-def record_audio(fs=16000):
+def record_audio(timestamp, fs=16000):
     """
     Grava áudio do microfone até que o usuário pressione Enter.
     
     Args:
+        timestamp: Timestamp para nomear o arquivo
         fs: Taxa de amostragem (padrão: 16000 Hz)
     
     Returns:
@@ -130,7 +134,6 @@ def record_audio(fs=16000):
     
     # Salvar em arquivo temporário
     audio_data = np.concatenate(frames, axis=0)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     audio_file = os.path.join(OUTPUT_DIR, f"recording_{timestamp}.wav")
     import soundfile as sf
     sf.write(audio_file, audio_data, fs)
@@ -363,19 +366,41 @@ def get_diary_prompt(text):
         (Enumera planes o intenciones futuras mencionadas)
         """
 
-def save_summary(summary, mode):
+def save_transcript(transcript, timestamp):
+    """
+    Salva a transcrição em um arquivo texto.
+    
+    Args:
+        transcript: Texto transcrito
+        timestamp: Timestamp para nomear o arquivo
+    
+    Returns:
+        Caminho para o arquivo salvo
+    """
+    # Criar nome do arquivo baseado no timestamp
+    filename = f"transcript_{timestamp}.txt"
+    filepath = os.path.join(OUTPUT_DIR, filename)
+    
+    # Salvar arquivo
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(transcript)
+    
+    print(ui['transcript_saved'] + filepath)
+    return filepath
+
+def save_summary(summary, mode, timestamp):
     """
     Salva o resumo em um arquivo markdown.
     
     Args:
         summary: Texto do resumo
         mode: Modo (reunião ou diário)
+        timestamp: Timestamp para nomear o arquivo
     
     Returns:
         Caminho para o arquivo salvo
     """
     # Criar nome do arquivo baseado no timestamp
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     mode_name = "meeting" if mode == "meeting" else "diary"
     filename = f"{mode_name}_{timestamp}.md"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -401,17 +426,23 @@ def main():
             mode = "diary"
             print(ui['diary_mode'])
         
+        # Timestamp único para todos os arquivos relacionados a esta sessão
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        
         # Gravar áudio
-        audio_file = record_audio()
+        audio_file = record_audio(timestamp)
         
         # Transcrever áudio
         transcript = transcribe_audio(audio_file)
+        
+        # Salvar transcrição
+        transcript_file = save_transcript(transcript, timestamp)
         
         # Gerar resumo
         summary = generate_summary(transcript, mode)
         
         # Salvar resumo
-        output_file = save_summary(summary, mode)
+        output_file = save_summary(summary, mode, timestamp)
         
         # Exibir mensagem de conclusão
         print(ui['complete'] + output_file)

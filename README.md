@@ -35,6 +35,7 @@
 | **Modo Diário** | Organiza seus pensamentos em atividades, desafios, conquistas e planejamento |
 | **Gravação Fácil** | Gravação com um clique usando seu microfone padrão |
 | **Transcrição Local** | Utiliza Whisper para transcrever seu áudio localmente, sem enviar para a nuvem |
+| **Arquivos de Transcrição** | Salva automaticamente as transcrições em arquivos `.txt` para referência futura |
 | **IA Flexível** | Escolha entre OpenAI ou modelos Ollama locais para geração de resumos |
 | **Processamento Rápido** | Otimizado para processamento eficiente, mesmo em hardware modesto |
 | **Personalizável** | Configure facilmente para suas necessidades específicas |
@@ -104,8 +105,8 @@ Siga o fluxo intuitivo:
 
 1. **Escolha o modo**: Reunião ou Diário
 2. **Grave seu áudio**: Pressione Enter quando terminar
-3. **Aguarde o processamento**: Transcrição e sumarização automáticas
-4. **Aproveite o resultado**: Resumo formatado salvo em Markdown
+3. **Aguarde o processamento**: Transcrição, salvamento da transcrição e sumarização automáticas
+4. **Aproveite o resultado**: Transcrição salva em formato de texto e resumo formatado em Markdown
 
 ## 🚀 Exemplos de Uso
 
