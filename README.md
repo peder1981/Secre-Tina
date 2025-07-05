@@ -31,15 +31,16 @@
 
 | Recurso | Descrição |
 |---------|-------------|
-| **Modo Reunião** | Gera resumos de reunião com participantes, pauta, pontos principais e ações |
+| **Modo Reunião** | Gera notas de reunião estruturadas com ações, decisões e notas |
 | **Modo Diário** | Organiza seus pensamentos em atividades, desafios, conquistas e planejamento |
 | **Revisão de Áudio** | Permite processar novamente áudios já gravados para novas transcrições e resumos |
+| **Configurações Acessíveis** | Configure OpenAI, Ollama, modelos Whisper e idioma diretamente da interface |
 | **Gravação Fácil** | Gravação com um clique usando seu microfone padrão |
 | **Transcrição Local** | Utiliza Whisper para transcrever seu áudio localmente, sem enviar para a nuvem |
 | **Arquivos de Transcrição** | Salva automaticamente as transcrições em arquivos `.txt` para referência futura |
 | **IA Flexível** | Escolha entre OpenAI ou modelos Ollama locais para geração de resumos |
 | **Processamento Rápido** | Otimizado para processamento eficiente, mesmo em hardware modesto |
-| **Personalizável** | Configure facilmente para suas necessidades específicas |
+| **Sair da Aplicação** | Opção para sair da aplicação quando necessário |
 
 ## 💻 Requisitos
 
@@ -104,15 +105,22 @@ python secre_tina.py
 
 Siga o fluxo intuitivo:
 
-1. **Escolha a ação**: Nova Gravação ou Revisar Áudio Existente
+1. **Escolha a ação**:
+   - Nova Gravação
+   - Revisar Áudio Existente
+   - Configurações
+   - Sair
 2. **Se nova gravação**:
    - Escolha o modo (Reunião ou Diário)
    - Grave seu áudio e pressione Enter quando terminar
 3. **Se revisar áudio existente**:
    - Selecione o arquivo de áudio da lista
    - Escolha o modo (Reunião ou Diário) para o resumo
-4. **Aguarde o processamento**: Transcrição, salvamento da transcrição e sumarização automáticas
-5. **Aproveite o resultado**: Transcrição salva em formato de texto e resumo formatado em Markdown
+4. **Se configurações**:
+   - Ajuste OpenAI, Ollama, modelo Whisper ou idioma
+   - As alterações são salvas automaticamente
+5. **Aguarde o processamento**: Transcrição, salvamento da transcrição e sumarização automáticas
+6. **Aproveite o resultado**: Transcrição salva em formato de texto e resumo formatado em Markdown
 
 ## 🚀 Exemplos de Uso
 
@@ -131,6 +139,21 @@ python secre_tina.py
 > 2  # Seleciona revisar áudio existente
 > 1  # Seleciona o arquivo de áudio da lista
 > 1  # Seleciona modo reunião para o novo resumo
+```
+
+### Configurações
+```bash
+python secre_tina.py
+> 3  # Seleciona configurações
+> 1  # Configura API OpenAI
+# Digite sua chave de API
+> 0  # Voltar ao menu principal
+```
+
+### Sair da Aplicação
+```bash
+python secre_tina.py
+> 0  # Sair da aplicação
 ```
 
 ### Reuniões de Equipe

@@ -36,16 +36,22 @@ try:
 except ImportError:
     OLLAMA_AVAILABLE = False
 
-# Carregar configurações do arquivo .env
+# Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
 
-# Configurações a partir do arquivo .env
+# Diretório de saída
+OUTPUT_DIR = os.getenv('OUTPUT_DIR', 'output')
+
+# Configurações de modelo e API
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
+MODEL = os.getenv('MODEL', 'gpt-3.5-turbo')
 OLLAMA_URL = os.getenv('OLLAMA_URL', 'http://localhost:11434')
-DEFAULT_MODEL = os.getenv('MODEL', 'gpt-3.5-turbo')
+
+# Carregar modelo de linguagem para whisper
 WHISPER_MODEL = os.getenv('WHISPER_MODEL', 'base')
+
+# Língua da interface
 LANGUAGE = os.getenv('LANGUAGE', 'pt')
-OUTPUT_DIR = os.getenv('OUTPUT_DIR', './output')
 
 # Configurar diretório de saída
 Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
@@ -54,9 +60,11 @@ Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 UI_STRINGS = {
     'pt': {
         'welcome': "🎙️ Bem-vindo à Secre-Tina! 🤖\n",
-        'action_select': "Escolha a ação:\n1. Nova Gravação\n2. Revisar Áudio Existente\n> ",
+        'action_select': "Escolha a ação:\n0. Sair\n1. Nova Gravação\n2. Revisar Áudio Existente\n3. Configurações\n> ",
         'new_recording': "🎙️ Nova gravação selecionada",
         'review_audio': "🔊 Revisão de áudio selecionada",
+        'config_selected': "🔧 Configurações selecionadas",
+        'exiting': "👋 Saindo da Secre-Tina. Até breve!",
         'select_audio': "Selecione o arquivo de áudio para revisão na pasta {0}:\n",
         'audio_not_found': "Nenhum arquivo de áudio encontrado na pasta {0}",
         'invalid_selection': "Seleção inválida. Por favor, tente novamente.",
@@ -72,12 +80,24 @@ UI_STRINGS = {
         'complete': "✅ Processo completo! Resumo salvo em: ",
         'error': "❌ Erro: ",
         'no_ai': "Nem OpenAI nem Ollama estão disponíveis. Verifique suas configurações.",
+        'config_menu': "\n⚙️ CONFIGURAÇÕES:\n1. Configurar OpenAI\n2. Configurar Ollama\n3. Configurar Modelo Whisper\n4. Configurar Idioma\n0. Voltar ao Menu Principal\n> ",
+        'current_config': "\n📊 Configurações Atuais:\n- Modelo IA: {0}\n- Modelo Whisper: {1}\n- Idioma: {2}\n- API OpenAI: {3}\n- URL Ollama: {4}\n",
+        'config_saved': "💾 Configurações salvas com sucesso!",
+        'enter_api_key': "Digite sua chave de API OpenAI (deixe em branco para manter a atual): ",
+        'enter_ollama_url': "Digite a URL do servidor Ollama (deixe em branco para manter a atual): ",
+        'enter_model': "Digite o nome do modelo a ser usado (deixe em branco para manter o atual): ",
+        'enter_whisper_model': "Digite o modelo Whisper a ser usado (tiny, base, small, medium, large) (deixe em branco para manter o atual): ",
+        'enter_language': "Escolha o idioma (pt, en, es) (deixe em branco para manter o atual): ",
+        'invalid_language': "Idioma inválido. Use pt, en ou es.",
+        'invalid_whisper_model': "Modelo Whisper inválido. Use tiny, base, small, medium ou large.",
     },
     'en': {
         'welcome': "🎙️ Welcome to Secre-Tina! 🤖\n",
-        'action_select': "Choose action:\n1. New Recording\n2. Review Existing Audio\n> ",
+        'action_select': "Choose action:\n0. Exit\n1. New Recording\n2. Review Existing Audio\n3. Settings\n> ",
         'new_recording': "🎙️ New recording selected",
         'review_audio': "🔊 Audio review selected",
+        'config_selected': "🔧 Settings selected",
+        'exiting': "👋 Exiting Secre-Tina. See you soon!",
         'select_audio': "Select an audio file for review in the {0} folder:\n",
         'audio_not_found': "No audio files found in the {0} folder",
         'invalid_selection': "Invalid selection. Please try again.",
@@ -93,12 +113,24 @@ UI_STRINGS = {
         'complete': "✅ Process complete! Summary saved at: ",
         'error': "❌ Error: ",
         'no_ai': "Neither OpenAI nor Ollama are available. Check your settings.",
+        'config_menu': "\n⚙️ SETTINGS:\n1. Configure OpenAI\n2. Configure Ollama\n3. Configure Whisper Model\n4. Configure Language\n0. Back to Main Menu\n> ",
+        'current_config': "\n📊 Current Settings:\n- AI Model: {0}\n- Whisper Model: {1}\n- Language: {2}\n- OpenAI API: {3}\n- Ollama URL: {4}\n",
+        'config_saved': "💾 Settings saved successfully!",
+        'enter_api_key': "Enter your OpenAI API key (leave blank to keep current): ",
+        'enter_ollama_url': "Enter Ollama server URL (leave blank to keep current): ",
+        'enter_model': "Enter model name to use (leave blank to keep current): ",
+        'enter_whisper_model': "Enter Whisper model to use (tiny, base, small, medium, large) (leave blank to keep current): ",
+        'enter_language': "Choose language (pt, en, es) (leave blank to keep current): ",
+        'invalid_language': "Invalid language. Use pt, en, or es.",
+        'invalid_whisper_model': "Invalid Whisper model. Use tiny, base, small, medium, or large.",
     },
     'es': {
         'welcome': "🎙️ ¡Bienvenido a Secre-Tina! 🤖\n",
-        'action_select': "Elija la acción:\n1. Nueva Grabación\n2. Revisar Audio Existente\n> ",
+        'action_select': "Elija la acción:\n0. Salir\n1. Nueva Grabación\n2. Revisar Audio Existente\n3. Configuración\n> ",
         'new_recording': "🎙️ Nueva grabación seleccionada",
         'review_audio': "🔊 Revisión de audio seleccionada",
+        'config_selected': "🔧 Configuración seleccionada",
+        'exiting': "👋 Saliendo de Secre-Tina. ¡Hasta pronto!",
         'select_audio': "Seleccione un archivo de audio para revisar en la carpeta {0}:\n",
         'audio_not_found': "No se encontraron archivos de audio en la carpeta {0}",
         'invalid_selection': "Selección inválida. Por favor, inténtelo de nuevo.",
@@ -114,6 +146,16 @@ UI_STRINGS = {
         'complete': "✅ ¡Proceso completo! Resumen guardado en: ",
         'error': "❌ Error: ",
         'no_ai': "Ni OpenAI ni Ollama están disponibles. Verifique su configuración.",
+        'config_menu': "\n⚙️ CONFIGURACIÓN:\n1. Configurar OpenAI\n2. Configurar Ollama\n3. Configurar Modelo Whisper\n4. Configurar Idioma\n0. Volver al Menú Principal\n> ",
+        'current_config': "\n📊 Configuración Actual:\n- Modelo IA: {0}\n- Modelo Whisper: {1}\n- Idioma: {2}\n- API OpenAI: {3}\n- URL Ollama: {4}\n",
+        'config_saved': "💾 ¡Configuración guardada con éxito!",
+        'enter_api_key': "Introduzca su clave API de OpenAI (deje en blanco para mantener la actual): ",
+        'enter_ollama_url': "Introduzca la URL del servidor Ollama (deje en blanco para mantener la actual): ",
+        'enter_model': "Introduzca el nombre del modelo a utilizar (deje en blanco para mantener el actual): ",
+        'enter_whisper_model': "Introduzca el modelo Whisper a utilizar (tiny, base, small, medium, large) (deje en blanco para mantener el actual): ",
+        'enter_language': "Elija el idioma (pt, en, es) (deje en blanco para mantener el actual): ",
+        'invalid_language': "Idioma no válido. Utilice pt, en o es.",
+        'invalid_whisper_model': "Modelo Whisper no válido. Utilice tiny, base, small, medium o large.",
     }
 }
 
@@ -204,7 +246,7 @@ def generate_summary(text, mode):
     if OPENAI_AVAILABLE and OPENAI_API_KEY:
         openai.api_key = OPENAI_API_KEY
         response = openai.ChatCompletion.create(
-            model=DEFAULT_MODEL,
+            model=MODEL,
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": text}
@@ -218,7 +260,7 @@ def generate_summary(text, mode):
         response = requests.post(
             f"{OLLAMA_URL}/api/generate",
             json={
-                "model": DEFAULT_MODEL,
+                "model": MODEL,
                 "prompt": f"{prompt}\n\n{text}",
                 "stream": False
             }
@@ -476,66 +518,206 @@ def select_audio_file():
         print(ui['invalid_selection'])
         return None
 
+def mask_api_key(api_key):
+    """
+    Mascara a chave da API para exibição.
+    
+    Args:
+        api_key: Chave da API a ser mascarada
+    
+    Returns:
+        Chave da API mascarada
+    """
+    if not api_key or len(api_key) < 8:
+        return "Não configurado"
+    return f"{api_key[:4]}...{api_key[-4:]}"
+
+def save_config(openai_key=None, ollama_url=None, model=None, whisper_model=None, language=None):
+    """
+    Salva as configurações no arquivo .env.
+    
+    Args:
+        openai_key: Chave da API OpenAI
+        ollama_url: URL do servidor Ollama
+        model: Nome do modelo a ser usado
+        whisper_model: Nome do modelo Whisper a ser usado
+        language: Idioma da interface
+    """
+    # Ler as configurações atuais
+    config = {}
+    if os.path.exists(".env"):
+        with open(".env", "r", encoding='utf-8') as f:
+            for line in f:
+                if '=' in line:
+                    key, value = line.strip().split('=', 1)
+                    config[key] = value
+    
+    # Atualizar configurações
+    if openai_key is not None and openai_key.strip():
+        config['OPENAI_API_KEY'] = openai_key.strip()
+    if ollama_url is not None and ollama_url.strip():
+        config['OLLAMA_URL'] = ollama_url.strip()
+    if model is not None and model.strip():
+        config['MODEL'] = model.strip()
+    if whisper_model is not None and whisper_model.strip():
+        config['WHISPER_MODEL'] = whisper_model.strip()
+    if language is not None and language.strip():
+        config['LANGUAGE'] = language.strip()
+    
+    # Salvar configurações
+    with open(".env", "w", encoding='utf-8') as f:
+        for key, value in config.items():
+            f.write(f"{key}={value}\n")
+
+def show_config_menu():
+    """
+    Exibe o menu de configurações e permite ao usuário modificar as configurações.
+    """
+    global OPENAI_API_KEY, MODEL, OLLAMA_URL, LANGUAGE, WHISPER_MODEL, ui
+    
+    # Exibir configurações atuais
+    print(ui['current_config'].format(
+        MODEL,
+        WHISPER_MODEL,
+        LANGUAGE,
+        mask_api_key(OPENAI_API_KEY),
+        OLLAMA_URL
+    ))
+    
+    while True:
+        # Exibir menu de configurações
+        choice = input(ui['config_menu'])
+        
+        if choice == "0":
+            # Voltar ao menu principal
+            break
+        elif choice == "1":
+            # Configurar OpenAI
+            api_key = input(ui['enter_api_key'])
+            if api_key.strip():
+                OPENAI_API_KEY = api_key.strip()
+                save_config(openai_key=OPENAI_API_KEY)
+                print(ui['config_saved'])
+        elif choice == "2":
+            # Configurar Ollama
+            ollama_url = input(ui['enter_ollama_url'])
+            if ollama_url.strip():
+                OLLAMA_URL = ollama_url.strip()
+                save_config(ollama_url=OLLAMA_URL)
+                print(ui['config_saved'])
+        elif choice == "3":
+            # Configurar modelo Whisper
+            whisper_model = input(ui['enter_whisper_model'])
+            if whisper_model.strip():
+                if whisper_model.lower() in ['tiny', 'base', 'small', 'medium', 'large']:
+                    WHISPER_MODEL = whisper_model.lower()
+                    save_config(whisper_model=WHISPER_MODEL)
+                    print(ui['config_saved'])
+                else:
+                    print(ui['invalid_whisper_model'])
+        elif choice == "4":
+            # Configurar idioma
+            language = input(ui['enter_language'])
+            if language.strip():
+                if language.lower() in ['pt', 'en', 'es']:
+                    LANGUAGE = language.lower()
+                    save_config(language=LANGUAGE)
+                    # Atualizar strings de interface
+                    ui = UI_STRINGS[LANGUAGE]
+                    print(ui['config_saved'])
+                else:
+                    print(ui['invalid_language'])
+
 def main():
     """Função principal do programa"""
     try:
-        # Exibir mensagem de boas-vindas
-        print(ui['welcome'])
-        
-        # Escolher ação (nova gravação ou revisar áudio existente)
-        action_choice = input(ui['action_select'])
-        
-        # Timestamp único para todos os arquivos relacionados a esta sessão
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        
-        # Definir arquivo de áudio com base na ação escolhida
-        if action_choice == "1":
-            # Nova gravação
-            print(ui['new_recording'])
+        # Loop principal do programa
+        while True:
+            # Exibir mensagem de boas-vindas
+            print(ui['welcome'])
             
-            # Escolher modo (reunião ou diário)
-            mode_choice = input(ui['mode_select'])
-            if mode_choice == "1":
-                mode = "meeting"
-                print(ui['meeting_mode'])
+            # Escolher ação
+            action_choice = input(ui['action_select'])
+            
+            # Sair da aplicação
+            if action_choice == "0":
+                print(ui['exiting'])
+                return 0
+            
+            # Timestamp único para todos os arquivos relacionados a esta sessão
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            
+            # Definir arquivo de áudio com base na ação escolhida
+            if action_choice == "1":
+                # Nova gravação
+                print(ui['new_recording'])
+                
+                # Escolher modo (reunião ou diário)
+                mode_choice = input(ui['mode_select'])
+                if mode_choice == "1":
+                    mode = "meeting"
+                    print(ui['meeting_mode'])
+                else:
+                    mode = "diary"
+                    print(ui['diary_mode'])
+                
+                # Gravar novo áudio
+                audio_file = record_audio(timestamp)
+                
+                # Transcrever áudio
+                transcript = transcribe_audio(audio_file)
+                
+                # Salvar transcrição
+                transcript_file = save_transcript(transcript, timestamp)
+                
+                # Gerar resumo
+                summary = generate_summary(transcript, mode)
+                
+                # Salvar resumo
+                output_file = save_summary(summary, mode, timestamp)
+                
+                # Exibir mensagem de conclusão
+                print(ui['complete'] + output_file)
+                
+            elif action_choice == "2":
+                # Revisar áudio existente
+                print(ui['review_audio'])
+                
+                # Selecionar arquivo de áudio existente
+                audio_file = select_audio_file()
+                if audio_file is None:
+                    continue
+                
+                # Escolher modo (reunião ou diário)
+                mode_choice = input(ui['mode_select'])
+                if mode_choice == "1":
+                    mode = "meeting"
+                    print(ui['meeting_mode'])
+                else:
+                    mode = "diary"
+                    print(ui['diary_mode'])
+                
+                # Transcrever áudio
+                transcript = transcribe_audio(audio_file)
+                
+                # Salvar transcrição
+                transcript_file = save_transcript(transcript, timestamp)
+                
+                # Gerar resumo
+                summary = generate_summary(transcript, mode)
+                
+                # Salvar resumo
+                output_file = save_summary(summary, mode, timestamp)
+                
+                # Exibir mensagem de conclusão
+                print(ui['complete'] + output_file)
+                
+            elif action_choice == "3":
+                # Menu de configurações
+                print(ui['config_selected'])
+                show_config_menu()
             else:
-                mode = "diary"
-                print(ui['diary_mode'])
-            
-            # Gravar novo áudio
-            audio_file = record_audio(timestamp)
-        else:
-            # Revisar áudio existente
-            print(ui['review_audio'])
-            
-            # Selecionar arquivo de áudio existente
-            audio_file = select_audio_file()
-            if audio_file is None:
-                return 1
-            
-            # Escolher modo (reunião ou diário)
-            mode_choice = input(ui['mode_select'])
-            if mode_choice == "1":
-                mode = "meeting"
-                print(ui['meeting_mode'])
-            else:
-                mode = "diary"
-                print(ui['diary_mode'])
-        
-        # Transcrever áudio
-        transcript = transcribe_audio(audio_file)
-        
-        # Salvar transcrição
-        transcript_file = save_transcript(transcript, timestamp)
-        
-        # Gerar resumo
-        summary = generate_summary(transcript, mode)
-        
-        # Salvar resumo
-        output_file = save_summary(summary, mode, timestamp)
-        
-        # Exibir mensagem de conclusão
-        print(ui['complete'] + output_file)
+                print(ui['invalid_selection'])
         
     except Exception as e:
         print(f"{ui['error']}{str(e)}")
