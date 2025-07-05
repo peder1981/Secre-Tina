@@ -198,21 +198,19 @@ def record_audio(timestamp, fs=16000):
     # Salvar em arquivo temporário
     audio_data = np.concatenate(frames, axis=0)
     audio_file = os.path.join(OUTPUT_DIR, f"recording_{timestamp}.wav")
+    
+    # Usar scipy para salvar o arquivo de áudio (mais confiável em ambientes variados)
     try:
-        import soundfile as sf
-        sf.write(audio_file, audio_data, fs)
-    except ImportError as e:
-        print(f"\n\nERRO DETALHADO: {str(e)}")
-        print(f"Python path: {sys.path}")
-        print(f"Ambiente virtual: {os.environ.get('VIRTUAL_ENV', 'Não detectado')}")
-        
-        # Tentar usar scipy como alternativa
+        from scipy.io import wavfile
+        wavfile.write(audio_file, fs, audio_data)
+    except ImportError:
+        # Tentar soundfile como fallback se scipy não estiver disponível
         try:
-            from scipy.io import wavfile
-            print("\nUsando scipy como alternativa para salvar áudio...")
-            wavfile.write(audio_file, fs, audio_data)
-        except ImportError:
-            print("Não foi possível importar nem scipy para salvar o arquivo de áudio.")
+            import soundfile as sf
+            sf.write(audio_file, audio_data, fs)
+        except ImportError as e:
+            print(f"\n\nERRO: Não foi possível importar nem scipy nem soundfile para salvar o áudio.")
+            print(f"Por favor, instale scipy: pip install scipy")
             raise
     
     return audio_file
